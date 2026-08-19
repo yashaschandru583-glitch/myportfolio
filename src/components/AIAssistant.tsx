@@ -32,7 +32,7 @@ export const AIAssistant: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'ai',
-      text: `Hello! I'm ${profile?.name || 'Alex'}'s AI Assistant. Ask me anything about their projects, technical skills, education, or career background!`,
+      text: `Hello! I'm ${profile?.name || 'YASHAS C'}'s AI Assistant. Ask me anything about their projects, technical skills, education, or career background!`,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -48,6 +48,33 @@ export const AIAssistant: React.FC = () => {
       scrollToBottom();
     }
   }, [messages, isOpen]);
+
+  // Client-side knowledge base fallback for static deployments (like GitHub Pages)
+  const getStaticAiAnswer = (q: string): string => {
+    const query = q.toLowerCase();
+    if (query.includes('skill') || query.includes('tech') || query.includes('stack')) {
+      return "YASHAS C is proficient across Full-Stack Web (React, Node.js, Express, Tailwind CSS, TypeScript), Core Programming (Java OOP, C, C++, Python), Databases (MongoDB, PostgreSQL, MySQL), and Embedded Systems (Arduino, ESP32, IoT sensors).";
+    }
+    if (query.includes('street light') || query.includes('arduino') || query.includes('hardware') || query.includes('iot')) {
+      return "The Automatic Street Light Controller is an Arduino Uno project utilizing LDR light sensors and relay modules to intelligently toggle street lights based on natural dusk/dawn lux thresholds with hysteresis debounce to prevent car headlight false triggers. It achieved up to 43% simulated energy savings!";
+    }
+    if (query.includes('student') || query.includes('management') || query.includes('school')) {
+      return "The Student Management System is a full-stack MERN application with role-based access control (Admin, Faculty, Student), transcript generation with GPA computation, and real-time attendance analytics.";
+    }
+    if (query.includes('calculator') || query.includes('java')) {
+      return "The Java Multi-Function Calculator is a desktop application with custom Dijkstra's Shunting-yard expression parsing, Reverse Polish Notation evaluation, and arbitrary precision arithmetic.";
+    }
+    if (query.includes('contact') || query.includes('email') || query.includes('phone') || query.includes('reach')) {
+      return `You can reach YASHAS C directly via email at ${profile?.email || 'yashas.c.dev@gmail.com'} or by phone at ${profile?.phone || '+91 8147837927'}. They are also available on GitHub and LinkedIn!`;
+    }
+    if (query.includes('hire') || query.includes('open') || query.includes('job') || query.includes('intern') || query.includes('role') || query.includes('opportunity')) {
+      return "Yes! YASHAS C is actively open to Full-Stack Developer, Software Engineer, and MERN Stack roles (both full-time and internships, with openness to remote and relocation).";
+    }
+    if (query.includes('education') || query.includes('college') || query.includes('degree') || query.includes('gpa')) {
+      return "YASHAS C is pursuing a Bachelor of Technology (B.Tech) in Computer Science and Engineering with an 8.9 / 10.0 CGPA, with strong foundations in Data Structures & Algorithms, DBMS, OS, and Networks.";
+    }
+    return `YASHAS C is a passionate Full-Stack Software Engineer with experience in React, Node.js, Express, MongoDB, Java, C++, and IoT. Feel free to explore the interactive project cards or open their verified resume!`;
+  };
 
   const handleSend = async (queryText?: string) => {
     const textToSend = queryText || input;
@@ -67,16 +94,18 @@ export const AIAssistant: React.FC = () => {
       const res = await api.askAI(textToSend);
       const aiReply: Message = {
         sender: 'ai',
-        text: res.answer || "I'm having trouble retrieving details right now, but feel free to explore the portfolio sections!",
+        text: res.answer || getStaticAiAnswer(textToSend),
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
       setMessages((prev) => [...prev, aiReply]);
     } catch (err) {
+      // Graceful client-side answer fallback
+      const fallbackAnswer = getStaticAiAnswer(textToSend);
       setMessages((prev) => [
         ...prev,
         {
           sender: 'ai',
-          text: "I encountered a minor network glitch. You can also contact Alex directly through the contact section!",
+          text: fallbackAnswer,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);

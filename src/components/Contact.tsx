@@ -70,9 +70,9 @@ export const Contact: React.FC = () => {
         phone: formData.phone,
         subject: formData.subject || 'Portfolio Inquiry',
         message: formData.message
-      });
+      }).catch(() => null);
 
-      if (res.success) {
+      if (res && res.success) {
         setSuccessMessage('Thank you! Your message has been sent to my inbox and saved to the database.');
         setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
         confetti({
@@ -80,17 +80,32 @@ export const Contact: React.FC = () => {
           spread: 70,
           origin: { y: 0.6 }
         });
+      } else {
+        // Fallback for static hosting (GitHub Pages)
+        try {
+          const stored = JSON.parse(localStorage.getItem('devfolio_offline_messages') || '[]');
+          stored.push({ ...formData, date: new Date().toISOString() });
+          localStorage.setItem('devfolio_offline_messages', JSON.stringify(stored));
+        } catch (e) {}
+
+        setSuccessMessage('Thank you! Your inquiry has been recorded. You can also send directly via email below.');
+        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+        confetti({
+          particleCount: 80,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
       }
     } catch (err: any) {
-      setErrorMessage(err.message || 'Failed to send message. Please try again or reach out directly.');
+      setErrorMessage('Failed to send message. Please reach out directly to yashas.c.dev@gmail.com.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const email = profile?.email || 'alex.morgan.dev@gmail.com';
-  const phone = profile?.phone || '+1 (555) 349-8821';
-  const location = profile?.location || 'San Francisco, CA (Open to Remote)';
+  const email = profile?.email || 'yashas.c.dev@gmail.com';
+  const phone = profile?.phone || '+91 8147837927';
+  const location = profile?.location || 'Bengaluru, India (Open to Relocation & Remote)';
 
   return (
     <section 
