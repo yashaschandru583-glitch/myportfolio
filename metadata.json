@@ -1,0 +1,6 @@
+{
+  "name": "DevFolio Pro - Full-Stack Developer Portfolio & CMS",
+  "description": "A modern, production-ready full-stack developer portfolio and content management system featuring dynamic project showcases, filterable tech stack, interactive resume, contact management, and a secure admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
